@@ -223,7 +223,7 @@ namespace PlexServiceWCF
         /// <summary>
         /// Restart plex, wait for the specified delay between stop and start
         /// </summary>
-        /// <param name="msDelay">The amount of time in ms to wait before starting after stop</param>
+        /// <param name="delay">The amount of time in ms to wait before starting after stop</param>
         internal void Restart(int delay)
         {
             Stop();
@@ -386,7 +386,6 @@ namespace PlexServiceWCF
         /// <summary>
         /// Kill all processes with the specified names
         /// </summary>
-        /// <param name="names">The names of the processes to kill</param>
         private void KillSupportingProcesses()
         {
             OnPlexStatusChange(this, new StatusChangeEventArgs("Killing supporting processes."));

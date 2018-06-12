@@ -30,7 +30,7 @@ namespace PlexServiceWCF
             _pms.PlexStatusChange += OnPlexEvent;
             _pms.StateChange += PlexStateChange;
             _pms.PlexStop += PlexStopped;
-            ///Start plex
+            //Start plex
             Start();
         }
 
