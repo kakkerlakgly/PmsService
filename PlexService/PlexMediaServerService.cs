@@ -26,7 +26,7 @@ namespace PlexService
         /// </summary>
         private string _address = string.Format(_baseAddress, 8787);
 
-        private readonly static TimeSpan _timeOut = TimeSpan.FromSeconds(2);
+        private static readonly TimeSpan _timeOut = TimeSpan.FromSeconds(2);
 
         private ServiceHost _host;
 
@@ -66,12 +66,17 @@ namespace PlexService
 
                 //Setup a TCP binding with appropriate timeouts.
                 //use a reliable connection so the clients can be notified when the recieve timeout has elapsed and the connection is torn down.
-                NetTcpBinding netTcpB = new NetTcpBinding();
-                netTcpB.OpenTimeout = _timeOut;
-                netTcpB.CloseTimeout = _timeOut;
-                netTcpB.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                netTcpB.ReliableSession.Enabled = true;
-                netTcpB.ReliableSession.InactivityTimeout = TimeSpan.FromMinutes(5);
+                NetTcpBinding netTcpB = new NetTcpBinding
+                {
+                    OpenTimeout = _timeOut,
+                    CloseTimeout = _timeOut,
+                    ReceiveTimeout = TimeSpan.FromMinutes(10),
+                    ReliableSession =
+                    {
+                        Enabled = true,
+                        InactivityTimeout = TimeSpan.FromMinutes(5)
+                    }
+                };
                 _host.AddServiceEndpoint(typeof(PlexServiceCommon.Interface.ITrayInteraction), netTcpB, _address);
                 _host.AddServiceEndpoint(typeof(IMetadataExchange),
                 MetadataExchangeBindings.CreateMexTcpBinding(), "mex");
@@ -153,12 +158,17 @@ namespace PlexService
         {
             //Create a NetTcp binding to the service and set some appropriate timeouts.
             //Use reliable connection so we know when we have been disconnected
-            var plexServiceBinding = new NetTcpBinding();
-            plexServiceBinding.OpenTimeout = _timeOut;
-            plexServiceBinding.CloseTimeout = _timeOut;
-            plexServiceBinding.SendTimeout = _timeOut;
-            plexServiceBinding.ReliableSession.Enabled = true;
-            plexServiceBinding.ReliableSession.InactivityTimeout = TimeSpan.FromMinutes(1);
+            var plexServiceBinding = new NetTcpBinding
+            {
+                OpenTimeout = _timeOut,
+                CloseTimeout = _timeOut,
+                SendTimeout = _timeOut,
+                ReliableSession =
+                {
+                    Enabled = true,
+                    InactivityTimeout = TimeSpan.FromMinutes(1)
+                }
+            };
             //Generate the endpoint from the local settings
             var plexServiceEndpoint = new EndpointAddress(_address);
 
@@ -182,10 +192,7 @@ namespace PlexService
             }
             catch
             {
-                if (_plexService != null)
-                {
-                    _plexService = null;
-                }
+                _plexService = null;
             }
         }
 

@@ -180,8 +180,6 @@ namespace PlexServiceTray
                             return "Remove Drive Map " + SelectedDriveMap.DriveLetter + " -> " + SelectedDriveMap.ShareName;
                         }
                         break;
-                    default:
-                        break; ;
                 }
                 return "Nothing selected!";
             }
@@ -291,8 +289,6 @@ namespace PlexServiceTray
                     DriveMapViewModel newDriveMapViewModel = new DriveMapViewModel(newDriveMap);
                     DriveMaps.Add(newDriveMapViewModel);
                     break;
-                default:
-                    break;
             }
             
         }
@@ -343,10 +339,7 @@ namespace PlexServiceTray
                 case 1:
                     DriveMaps.Remove(SelectedDriveMap);
                     break;
-                default:
-                    break;
             }
-            
         }
 
         #endregion RemoveCommand

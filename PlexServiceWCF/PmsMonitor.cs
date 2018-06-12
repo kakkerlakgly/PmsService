@@ -81,7 +81,7 @@ namespace PlexServiceWCF
             Settings settings = SettingsHandler.Load();
             settings.AuxiliaryApplications.ForEach(x => _auxAppMonitors.Add(new AuxiliaryApplicationMonitor(x)));
             //hook up the state change event for all the applications
-            _auxAppMonitors.ForEach(x => x.StatusChange += new AuxiliaryApplicationMonitor.StatusChangeHandler(OnPlexStatusChange));
+            _auxAppMonitors.ForEach(x => x.StatusChange += OnPlexStatusChange);
 
         }
         #endregion
@@ -132,7 +132,7 @@ namespace PlexServiceWCF
             {
                 if (key != null)
                 {
-                    if (!Object.Equals(key.GetValue("FirstRun") as string, "0"))
+                    if (!Equals(key.GetValue("FirstRun") as string, "0"))
                     {
                         try
                         {
@@ -198,7 +198,7 @@ namespace PlexServiceWCF
                 _auxAppMonitors.Clear();
                 settings.AuxiliaryApplications.ForEach(x => _auxAppMonitors.Add(new AuxiliaryApplicationMonitor(x)));
                 //hook up the state change event for all the applications
-                _auxAppMonitors.ForEach(x => x.StatusChange += new AuxiliaryApplicationMonitor.StatusChangeHandler(OnPlexStatusChange));
+                _auxAppMonitors.ForEach(x => x.StatusChange += OnPlexStatusChange);
                 _auxAppMonitors.AsParallel().ForAll(x => x.Start());
             }
         }
@@ -295,15 +295,17 @@ namespace PlexServiceWCF
             if (_plex == null)
             {
                 //see if its running already
-                _plex = Process.GetProcessesByName(PmsMonitor._plexName).FirstOrDefault();
+                _plex = Process.GetProcessesByName(_plexName).FirstOrDefault();
                 if (_plex == null)
                 {
                     OnPlexStatusChange(this, new StatusChangeEventArgs("Attempting to start Plex"));
                     //plex process
                     _plex = new Process();
-                    ProcessStartInfo plexStartInfo = new ProcessStartInfo(_executableFileName);
-                    plexStartInfo.WorkingDirectory = Path.GetDirectoryName(_executableFileName);
-                    plexStartInfo.UseShellExecute = false;
+                    ProcessStartInfo plexStartInfo = new ProcessStartInfo(_executableFileName)
+                    {
+                        WorkingDirectory = Path.GetDirectoryName(_executableFileName),
+                        UseShellExecute = false
+                    };
                     //check version to see if we can use the startup argument
                     string plexVersion = FileVersionInfo.GetVersionInfo(_executableFileName).FileVersion;
                     Version v = new Version(plexVersion);
@@ -319,7 +321,7 @@ namespace PlexServiceWCF
                     }
                     _plex.StartInfo = plexStartInfo;
                     _plex.EnableRaisingEvents = true;
-                    _plex.Exited += new EventHandler(Plex_Exited);
+                    _plex.Exited += Plex_Exited;
                     try
                     {
                         _plex.Start();
@@ -339,7 +341,7 @@ namespace PlexServiceWCF
                     try
                     {
                         _plex.EnableRaisingEvents = true;
-                        _plex.Exited += new EventHandler(Plex_Exited);
+                        _plex.Exited += Plex_Exited;
                         State = PlexState.Running;
                     }
                     catch
@@ -483,7 +485,7 @@ namespace PlexServiceWCF
                 string location = Path.Combine(TrayInteraction.APP_DATA_PATH, "location.txt");
                 if (File.Exists(location))
                 {
-                    string userSpecified = string.Empty;
+                    string userSpecified;
                     using (StreamReader sr = new StreamReader(location))
                     {
                         userSpecified = sr.ReadLine();
@@ -503,14 +505,15 @@ namespace PlexServiceWCF
                 //this method is crap. I dont like having to iterate through directories looking to see if a file exists or not.
                 //start by looking in the program files directory, even if we are on 64bit windows, plex may be 64bit one day... maybe
 
-                List<string> possibleLocations = new List<string>();
-
-                //some hard coded attempts, this is nice and fast and should hit 90% of the time... even if it is ugly
-                possibleLocations.Add(@"C:\Program Files\Plex\Plex Media Server\Plex Media Server.exe");
-                possibleLocations.Add(@"C:\Program Files (x86)\Plex\Plex Media Server\Plex Media Server.exe");
-                //special folder
-                possibleLocations.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Plex\Plex Media Server\Plex Media Server.exe"));
-
+                List<string> possibleLocations = new List<string>
+                {
+                    //some hard coded attempts, this is nice and fast and should hit 90% of the time... even if it is ugly
+                    @"C:\Program Files\Plex\Plex Media Server\Plex Media Server.exe",
+                    @"C:\Program Files (x86)\Plex\Plex Media Server\Plex Media Server.exe",
+                    //special folder
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                        @"Plex\Plex Media Server\Plex Media Server.exe")
+                };
 
                 foreach (string location in possibleLocations)
                 {

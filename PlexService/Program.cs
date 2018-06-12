@@ -17,12 +17,12 @@ namespace PlexService
             {
                 System.Diagnostics.Debugger.Launch();
             }
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[] 
-			{ 
-				new PlexMediaServerService() 
-			};
-            ServiceBase.Run(ServicesToRun);
+
+            var servicesToRun = new ServiceBase[] 
+            { 
+                new PlexMediaServerService() 
+            };
+            ServiceBase.Run(servicesToRun);
         }
     }
 }

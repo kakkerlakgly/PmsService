@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,7 +18,7 @@ namespace PlexServiceTray
     /// <summary>
     /// Interaction logic for AboutWindow.xaml
     /// </summary>
-    public partial class AboutWindow : Window
+    public partial class AboutWindow
     {
         public string Version
         {
@@ -89,7 +90,7 @@ namespace PlexServiceTray
         {
             InitializeComponent();
             File = "LICENCE.rtf";
-            Version = string.Format("PMS Service {0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            Version = string.Format("PMS Service {0}", Assembly.GetExecutingAssembly().GetName().Version);
             Help = "Please report any bugs or issues to:";
             DataContext = this;
         }

@@ -94,7 +94,7 @@ namespace PlexServiceTray
         internal static ConnectionSettings Load()
         {
             string filePath = GetSettingsFile();
-            ConnectionSettings settings = null;
+            ConnectionSettings settings;
             if (File.Exists(filePath))
             {
                 using (StreamReader sr = new StreamReader(filePath))

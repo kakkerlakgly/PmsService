@@ -72,7 +72,7 @@ namespace PlexServiceTray
         {
             get
             {
-                return this.GetType().GetProperties().Where(p => getValidations(p).Length != 0).ToDictionary(p => p.Name, p => getValueGetter(p));
+                return GetType().GetProperties().Where(p => getValidations(p).Length != 0).ToDictionary(p => p.Name, p => getValueGetter(p));
             }
         }
 
@@ -80,7 +80,7 @@ namespace PlexServiceTray
         {
             get
             {
-                return this.GetType().GetProperties().Where(p => getValidations(p).Length != 0).ToDictionary(p => p.Name, p => getValidations(p));
+                return GetType().GetProperties().Where(p => getValidations(p).Length != 0).ToDictionary(p => p.Name, p => getValidations(p));
             }
         }
 

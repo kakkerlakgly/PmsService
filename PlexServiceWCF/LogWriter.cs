@@ -20,9 +20,9 @@ namespace PlexServiceWCF
         {
             lock (_syncObject)
             {
-                if (!System.IO.Directory.Exists(Path.GetDirectoryName(_logFile)))
+                if (!Directory.Exists(Path.GetDirectoryName(_logFile)))
                 {
-                    System.IO.Directory.CreateDirectory(Path.GetDirectoryName(_logFile));
+                    Directory.CreateDirectory(Path.GetDirectoryName(_logFile));
                 }
 
                 //reduce its size if its getting big

@@ -56,13 +56,15 @@ namespace PlexServiceCommon
                 var drive = DriveLetter.Substring(0,1) + ":";
                 
                 //create struct data
-                NetworkResource netRes = new NetworkResource();
-                netRes.Scope = 2;
-                netRes.Type = 0x1;
-                netRes.DisplayType = 3;
-                netRes.Usage = 1;
-                netRes.RemoteName = ShareName;
-                netRes.LocalName = drive;
+                NetworkResource netRes = new NetworkResource
+                {
+                    Scope = 2,
+                    Type = 0x1,
+                    DisplayType = 3,
+                    Usage = 1,
+                    RemoteName = ShareName,
+                    LocalName = drive
+                };
                 //if force, unmap ready for new connection
                 if (force)
                 {

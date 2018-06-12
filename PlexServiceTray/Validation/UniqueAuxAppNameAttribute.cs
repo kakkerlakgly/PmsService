@@ -12,10 +12,6 @@ namespace PlexServiceTray.Validation
 
         private SettingsWindowViewModel _context;
 
-        public UniqueAuxAppNameAttribute()
-        {
-        }
-
         public override string FormatErrorMessage(string name)
         {
             return string.Format(_errorMessage, name);

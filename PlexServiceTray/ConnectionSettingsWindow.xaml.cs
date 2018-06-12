@@ -17,7 +17,7 @@ namespace PlexServiceTray
     /// <summary>
     /// Interaction logic for ConnectionSettingsWindow.xaml
     /// </summary>
-    public partial class ConnectionSettingsWindow : Window
+    public partial class ConnectionSettingsWindow
     {
         public ConnectionSettingsWindow()
         {

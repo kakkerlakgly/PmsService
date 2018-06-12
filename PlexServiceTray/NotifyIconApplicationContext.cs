@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -11,6 +12,7 @@ using System.IO;
 using PlexServiceCommon;
 using System.ServiceModel;
 using System.Windows;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace PlexServiceTray
 {
@@ -22,9 +24,9 @@ namespace PlexServiceTray
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer _components = null;
+        private IContainer _components = null;
 
-        private System.Windows.Forms.NotifyIcon _notifyIcon;
+        private NotifyIcon _notifyIcon;
 
         //private readonly static TimeSpan _timeOut = TimeSpan.FromSeconds(2);
 
@@ -60,12 +62,14 @@ namespace PlexServiceTray
         /// </summary>
         private void InitializeContext()
         {
-            _components = new System.ComponentModel.Container();
-            _notifyIcon = new NotifyIcon(_components);
-            _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
-            _notifyIcon.Icon = new Icon( Properties.Resources.PlexService, SystemInformation.SmallIconSize);
-            _notifyIcon.Text = "Manage Plex Media Server Service";
-            _notifyIcon.Visible = true;
+            _components = new Container();
+            _notifyIcon = new NotifyIcon(_components)
+            {
+                ContextMenuStrip = new ContextMenuStrip(),
+                Icon = new Icon(Properties.Resources.PlexService, SystemInformation.SmallIconSize),
+                Text = "Manage Plex Media Server Service",
+                Visible = true
+            };
             _notifyIcon.MouseClick += NotifyIcon_Click;
             _notifyIcon.MouseDoubleClick += NotifyIcon_DoubleClick;
             _notifyIcon.ContextMenuStrip.Opening += ContextMenuStrip_Opening;
@@ -79,12 +83,18 @@ namespace PlexServiceTray
             var localSettings = ConnectionSettings.Load();
             //Create a NetTcp binding to the service and set some appropriate timeouts.
             //Use reliable connection so we know when we have been disconnected
-            var plexServiceBinding = new NetTcpBinding();
-            plexServiceBinding.OpenTimeout = TimeSpan.FromSeconds(2); 
-            plexServiceBinding.CloseTimeout = TimeSpan.FromSeconds(2);
-            plexServiceBinding.SendTimeout = TimeSpan.FromSeconds(2);
-            plexServiceBinding.ReliableSession.Enabled = true;
-            plexServiceBinding.ReliableSession.InactivityTimeout = TimeSpan.FromMinutes(1);
+            var plexServiceBinding = new NetTcpBinding
+            {
+                OpenTimeout = TimeSpan.FromSeconds(2),
+                CloseTimeout = TimeSpan.FromSeconds(2),
+                SendTimeout = TimeSpan.FromSeconds(2),
+                ReliableSession =
+                {
+                    Enabled = true,
+                    InactivityTimeout = TimeSpan.FromMinutes(1)
+                }
+            };
+
             //Generate the endpoint from the local settings
             var plexServiceEndpoint = new EndpointAddress(localSettings.getServiceAddress());
 
@@ -109,10 +119,7 @@ namespace PlexServiceTray
             }
             catch
             {
-                if (_plexService != null)
-                {
-                    _plexService = null;
-                }
+                _plexService = null;
             }
         }
 
@@ -211,17 +218,16 @@ namespace PlexServiceTray
                     var auxAppsToLink = settings.AuxiliaryApplications.Where(aux => !string.IsNullOrEmpty(aux.Url)).ToList();
                     if(auxAppsToLink.Count > 0)
                     {
-                        var auxAppsItem = new ToolStripMenuItem();
-                        auxAppsItem.Text = "Auxiliary Applications";
+                        var auxAppsItem = new ToolStripMenuItem {Text = "Auxiliary Applications"};
                         auxAppsToLink.ForEach(aux =>
                         {
                             auxAppsItem.DropDownItems.Add(aux.Name, null, (s, a) => 
                             {
                                 try
                                 {
-                                    System.Diagnostics.Process.Start(aux.Url);
+                                    Process.Start(aux.Url);
                                 }
-                                catch(Exception ex) { System.Windows.Forms.MessageBox.Show(ex.Message, "Woops!", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                                catch(Exception ex) { MessageBox.Show(ex.Message, "Woops!", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                             });
                         });
                         _notifyIcon.ContextMenuStrip.Items.Add(auxAppsItem);

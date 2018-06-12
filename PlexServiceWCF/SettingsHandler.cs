@@ -48,7 +48,7 @@ namespace PlexServiceWCF
         public static Settings Load()
         {
             string filePath = GetSettingsFile();
-            Settings settings = null;
+            Settings settings;
             if (File.Exists(filePath))
             {
                 using (StreamReader sr = new StreamReader(filePath))

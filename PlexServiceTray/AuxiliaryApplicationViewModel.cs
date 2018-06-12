@@ -172,8 +172,7 @@ namespace PlexServiceTray
 
         private void OnBrowse(object parameter)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.FileName = FilePath;
+            OpenFileDialog ofd = new OpenFileDialog {FileName = FilePath};
             if (ofd.ShowDialog() == true)
             {
                 FilePath = ofd.FileName;
@@ -208,9 +207,12 @@ namespace PlexServiceTray
 
         private void OnBrowseFolder(object parameter)
         {
-            VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog();
-            fbd.Description = "Please select working directory";
-            fbd.UseDescriptionForTitle = true;
+            VistaFolderBrowserDialog fbd =
+                new VistaFolderBrowserDialog
+                {
+                    Description = "Please select working directory",
+                    UseDescriptionForTitle = true
+                };
             if (!string.IsNullOrEmpty(WorkingFolder))
             {
                 fbd.SelectedPath = WorkingFolder;

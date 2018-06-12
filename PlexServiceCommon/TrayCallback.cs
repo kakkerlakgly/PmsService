@@ -24,8 +24,6 @@ namespace PlexServiceCommon
                 case PlexState.Stopping:
                     OnStateChange(string.Format("Plex {0}", state.ToString()));
                     break;
-                default:
-                    break;
             }
         }
 

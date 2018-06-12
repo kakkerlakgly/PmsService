@@ -109,7 +109,7 @@ namespace PlexServiceCommon
             {
                 OnStatusChange(this, new StatusChangeEventArgs(_aux.Name + " has completed"));
                 //unsubscribe
-                _auxProcess.Exited -= this.auxProcess_Exited;
+                _auxProcess.Exited -= auxProcess_Exited;
                 _auxProcess.Dispose();
                 Running = false;
             }
@@ -130,13 +130,18 @@ namespace PlexServiceCommon
                 //we dont care if this is already running, depending on the application, this could cause lots of issues but hey... 
                 
                 //Auxiliary process
-                _auxProcess = new Process();
-                _auxProcess.StartInfo.FileName = _aux.FilePath;
-                _auxProcess.StartInfo.WorkingDirectory = _aux.WorkingFolder;
-                _auxProcess.StartInfo.UseShellExecute = false;
-                _auxProcess.StartInfo.Arguments = _aux.Argument;
-                _auxProcess.EnableRaisingEvents = true;
-                _auxProcess.Exited += new EventHandler(auxProcess_Exited);
+                _auxProcess = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = _aux.FilePath,
+                        WorkingDirectory = _aux.WorkingFolder,
+                        UseShellExecute = false,
+                        Arguments = _aux.Argument
+                    },
+                    EnableRaisingEvents = true
+                };
+                _auxProcess.Exited += auxProcess_Exited;
                 try
                 {
                     _auxProcess.Start();
